@@ -682,6 +682,15 @@ static NSDictionary* customCertificatesForHost;
     if (webView.URL != nil) {
         host = webView.URL.host;
     }
+
+     // WKWebView加载不受信任的https satrt
+     if([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]){
+        NSURLCredential *card= [[NSURLCredential alloc]initWithTrust:challenge.protectionSpace.serverTrust];
+        completionHandler(NSURLSessionAuthChallengeUseCredential,card);
+        return ;
+     }
+     // WKWebView加载不受信任的https  end
+
     if ([[challenge protectionSpace] authenticationMethod] == NSURLAuthenticationMethodClientCertificate) {
         completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
         return;
@@ -892,7 +901,7 @@ static NSDictionary* customCertificatesForHost;
         _onHttpError(event);
       }
     }
-  }  
+  }
 
   decisionHandler(WKNavigationResponsePolicyAllow);
 }
